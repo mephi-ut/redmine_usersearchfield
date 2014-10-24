@@ -18,7 +18,7 @@ module UserSearchField
 				if custom_value.custom_field.edit_tag_style == 'search'
 					return search_edit_tag(view, tag_id, tag_name, custom_value, options)
 				end
-				return edit_tag_without_usersearchfield
+				return edit_tag_without_usersearchfield(view, tag_id, tag_name, custom_value, options)
 			end
 
 
