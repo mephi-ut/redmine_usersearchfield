@@ -40,7 +40,8 @@ module UserSearchField
 
 				case custom_field.type
 					when 'IssueCustomField'
-						addcmd = "updateIssueFrom('#{view.escape_javascript view.project_issue_form_path(custom_value.customized.project, :id => custom_value.customized, :format => 'js')}');"
+						issue = custom_value.customized
+						addcmd = "updateIssueFrom('#{view.escape_javascript view.project_issue_form_path(issue.project, :id => issue, :format => 'js')}');"
 					else
 						addcmd = ''
 				end
@@ -49,7 +50,12 @@ module UserSearchField
 				if custom_value.custom_field.multiple?
 					users_list = view.tag(:span)
 					custom_value.value.each do |uid|
-						user_entry = view.link_to_function(User.find(uid).name, "var e = document.getElementById('#{tag_id}_set_#{uid}_entry'); e.parentNode.removeChild(e);", :class => 'icon-del usersearchfield_deluser_entry')
+						next if uid.nil?
+
+						user = User.find(uid)
+						next if user.nil?
+
+						user_entry = view.link_to_function(user.name, "var e = document.getElementById('#{tag_id}_set_#{uid}_entry'); e.parentNode.removeChild(e);", :class => 'icon-del usersearchfield_deluser_entry')
 #						user_entry << custom_value.customized.to_yaml
 						user_entry << view.hidden_field_tag(tag_name, uid)
 
