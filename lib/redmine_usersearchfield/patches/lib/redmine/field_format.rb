@@ -38,14 +38,36 @@ module UserSearchField
 
 				options_tags = blank + view.options_for_select(custom_field.possible_values_options(custom_value.customized), custom_value.value)
 
-		#                tag << select_tag(field_name, select_tag_content, :id => field_id, :class => field_class)
-				tag << view.select_tag(tag_name, options_tags, options.merge(:id => tag_id, :multiple => custom_value.custom_field.multiple?))
-				if custom_value.custom_field.multiple?
-					s << view.hidden_field_tag(tag_name, '')
+				case custom_field.type
+					when 'IssueCustomField'
+						addcmd = "updateIssueFrom('#{view.escape_javascript view.project_issue_form_path(custom_value.customized.project, :id => custom_value.customized, :format => 'js')}');"
+					else
+						addcmd = ''
 				end
-				tag << view.content_tag(:span,  options_tags, id: "#{tag_id}_cancel_content", style: 'display:none')
 
-				tag << view.javascript_tag("
+				div_content = view.tag(:span)
+				if custom_value.custom_field.multiple?
+					users_list = view.tag(:span)
+					custom_value.value.each do |uid|
+						user_entry = view.link_to_function(User.find(uid).name, "var e = document.getElementById('#{tag_id}_set_#{uid}_entry'); e.parentNode.removeChild(e);", :class => 'icon-del usersearchfield_deluser_entry')
+#						user_entry << custom_value.customized.to_yaml
+						user_entry << view.hidden_field_tag(tag_name, uid)
+
+						users_list << view.content_tag(:li, user_entry, :id => "#{tag_id}_set_#{uid}_entry")
+					end
+
+					div_content << view.content_tag(:ul, users_list, :style => 'padding: 0; list-style-type: none')
+				end
+
+				div_content << view.select_tag(tag_name, options_tags, options.merge(:id => tag_id, :multiple => custom_value.custom_field.multiple?))
+
+				div_content << view.content_tag(:span,  options_tags, id: "#{tag_id}_cancel_content", style: 'display:none')
+				if custom_value.custom_field.multiple?
+					div_content << ' '
+					div_content << view.link_to_function(l(:label_add), "#{addcmd}; $('##{tag_id}').val([]);")
+				end
+
+				div_content << view.javascript_tag("
 					observeSearchfield('cf_#{tag_id}_search_ac', '#{tag_id}',
 						'#{
 							view.escape_javascript view.url_for(
@@ -57,6 +79,10 @@ module UserSearchField
 						}'
 					)
 				")
+
+				if custom_value.custom_field.multiple?
+					tag << view.content_tag(:div, div_content, :style => 'display: inline-block; margin-left: 180px; width: 100%')
+				end
 			end
 		end
 	end

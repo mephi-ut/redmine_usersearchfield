@@ -1,5 +1,7 @@
 require 'redmine'
 
+require_dependency 'redmine_usersearchfield/hooks/view_layouts_base_html_head'
+
 require_dependency "redmine_usersearchfield/patches/app/helpers/custom_fields_helper"
 require_dependency "redmine_usersearchfield/patches/lib/redmine/field_format"
 	
