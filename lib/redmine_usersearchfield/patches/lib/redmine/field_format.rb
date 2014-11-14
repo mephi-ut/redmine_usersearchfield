@@ -36,7 +36,7 @@ module UserSearchField
 				((custom_field.default_value.blank? && custom_value.value.blank?) ? view.content_tag(:option, "--- #{l(:actionview_instancetag_blank_option)} ---") : ''.html_safe) :
 					view.content_tag(:option)
 
-				options_tags = blank + view.options_for_select(custom_field.possible_values_options(custom_value.customized), custom_value.value)
+				options_tags = blank + view.options_for_select(custom_field.possible_values_options(custom_value.customized), custom_value.custom_field.multiple? ? nil : custom_value.value)
 
 				case custom_field.type
 					when 'IssueCustomField'
