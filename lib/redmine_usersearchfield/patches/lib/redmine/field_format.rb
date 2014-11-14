@@ -51,6 +51,7 @@ module UserSearchField
 					users_list = view.tag(:span)
 					custom_value.value.each do |uid|
 						next if uid.nil?
+						next if uid == ''
 
 						user = User.find(uid)
 						next if user.nil?
