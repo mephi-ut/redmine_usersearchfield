@@ -16,6 +16,7 @@ module UserSearchField
 		module InstanceMethods
 			def edit_tag_with_usersearchfield(view, tag_id, tag_name, custom_value, options={})
 				if custom_value.custom_field.edit_tag_style == 'search'
+					Rails.logger.info(tag_name.to_yaml)
 					return search_edit_tag(view, tag_id, tag_name, custom_value, options)
 				end
 				return edit_tag_without_usersearchfield(view, tag_id, tag_name, custom_value, options)
@@ -66,7 +67,7 @@ module UserSearchField
 					div_content << view.content_tag(:ul, users_list, :style => 'padding: 0; list-style-type: none')
 				end
 
-				div_content << view.select_tag(tag_name, options_tags, options.merge(:id => tag_id, :multiple => custom_value.custom_field.multiple?))
+				div_content << view.select_tag(tag_name, options_tags, options.merge(:id => tag_id, :multiple => custom_value.custom_field.multiple?, :class => "usersearchselect"))
 
 				div_content << view.content_tag(:span,  options_tags, id: "#{tag_id}_cancel_content", style: 'display:none')
 				if custom_value.custom_field.multiple?
@@ -88,7 +89,7 @@ module UserSearchField
 				")
 
 				if custom_value.custom_field.multiple?
-					tag << view.content_tag(:div, div_content, :style => 'display: inline-block; margin-left: 180px; width: 100%')
+					tag << view.content_tag(:div, div_content, :style => 'display: inline-block; margin-left: 180px')
 				end
 			end
 		end
